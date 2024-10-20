@@ -76,4 +76,5 @@ for i in range(-30, 31):
     y2 = buf + round(r * 0.90 * np.cos(np.radians(6) * i))
     draw_line(x1, y1, x2, y2)
 imshow(np.asarray(img))
+img.save('dial.png')
 plt.show()
