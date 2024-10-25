@@ -5,7 +5,7 @@ import numpy as np
 from numpy.ma.core import append
 
 
-y_min = 1000
+y_min = float('inf')
 y_max = -1
 
 
