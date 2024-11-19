@@ -153,20 +153,20 @@ def fill3D(vertexes):
 
 def update_buffer(points, z_buffer):
     for point in points:
-        if point.z < z_buffer[int(point.x)][int(point.y)]:
+        if point.z > z_buffer[int(point.x)][int(point.y)]:
             z_buffer[int(point.x)][int(point.y)] = point.z
 
 
 def draw_buffer(image, points, z_buffer, color):
     for point in points:
-        if point.z <= z_buffer[int(point.x)][int(point.y)]:
+        if point.z >= z_buffer[int(point.x)][int(point.y)]:
             image.putpixel((int(point.x), int(point.y)), color)
 
 
 img = Image.new('RGB', (300, 300), 'black')
 vertices, faces = parse_obj("diamond.obj")
 
-z_buffer = [[1000 for _ in range(300)] for a in range(300)]
+z_buffer = [[-float('INF') for _ in range(300)] for a in range(300)]
 
 rotate_1 = [[m.cos(m.radians(45)), -m.sin(m.radians(45)), 0, 0],
             [m.sin(m.radians(45)), m.cos(m.radians(45)), 0, 0],
