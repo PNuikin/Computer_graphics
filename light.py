@@ -1,6 +1,4 @@
 import re
-from distutils.command.check import check
-
 from PIL import Image
 import math as m
 
@@ -11,6 +9,8 @@ class point3:
         self.y = y
         self.z = z
 
+
+diamond_center = []
 
 def draw_line(x1, y1, x2, y2):
     dx = abs(x2 - x1)
@@ -76,6 +76,9 @@ def center():
             f[i] = [(f[i][0] + img.width / 2) % img.width, f[i][1] + (img.height / 2) % img.width,
                     (f[i][2] + img.width / 2) % img.width]
 
+def get_center(vertices):
+    global diamond_center
+    diamond_center = [(vertices[1][0] - vertices[3][0]) // 2, (vertices[1][1] - vertices[3][1]) // 2, (vertices[1][2] - vertices[3][2]) // 2]
 
 def get_plane(point1, point2, point3):
     x1, y1, z1 = point1.x, point1.y, point1.z
@@ -91,11 +94,12 @@ def get_plane(point1, point2, point3):
         vector1[0] * vector2[1] - vector1[1] * vector2[0]
     ]
 
-    check = [150 - x1, 150 - x2, -x3]
-    if check[0] * normal_vector[0] + check[1] * normal_vector[1] + check[2] * normal_vector[2] >= 0:
-        A, B, C = normal_vector[0], normal_vector[1], normal_vector[2]
-    else:
-        A, B, C = -normal_vector[0], -normal_vector[1], -normal_vector[2]
+    # check = [diamond_center[0] - (x1 + x2 + x3) // 3, diamond_center[1] - (y1 + y2 + y3) // 3, diamond_center[2] - (z1 + z2 + z3) // 3]
+    # if check[0] * normal_vector[0] + check[1] * normal_vector[1] + check[2] * normal_vector[2] < 0:
+    #     A, B, C = normal_vector[0], normal_vector[1], normal_vector[2]
+    # else:
+    #     A, B, C = -normal_vector[0], -normal_vector[1], -normal_vector[2]
+    A, B, C = normal_vector[0], normal_vector[1], normal_vector[2]
     D = -(A * x1 + B * y1 + C * z1)
 
     return A, B, C, D
@@ -246,7 +250,9 @@ for f in faces:
         ans = matrix_vector(rotate_3, [f[i][0], f[i][1], f[i][2], 1])
         f[i] = [ans[0], ans[1], ans[2]]
 
+
 center()
+get_center(vertices)
 new_faces = []
 for f in range(len(faces)):
     A = point3(faces[f][0][0], faces[f][0][1], faces[f][0][2])
@@ -255,11 +261,12 @@ for f in range(len(faces)):
     new_faces.append(fill3D([A, B, C]))
     update_buffer(new_faces[f], z_buffer)
 
+
 color = [(255, 0, 0), (0, 0, 255), (0, 255, 0), (10, 10, 210),
          (125, 125, 125), (200, 150, 10), (100, 240, 50), (240, 200, 100),]
 
 for i in range(len(new_faces)):
-    draw_light(img, new_faces[i], color[i], z_buffer, point3(0, 0, 300),
+    draw_light(img, new_faces[i], color[i], z_buffer, point3(300, 300, 0),
                get_plane(point3(*faces[i][0]), point3(*faces[i][1]), point3(*faces[i][2])))
 
 img.save('light_with_spec.png')
