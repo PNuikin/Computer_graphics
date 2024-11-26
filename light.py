@@ -1,6 +1,4 @@
 import re
-from distutils.command.check import check
-
 from PIL import Image
 import math as m
 
@@ -99,19 +97,6 @@ def get_plane(point1, point2, point3):
     D = -(A * x1 + B * y1 + C * z1)
 
     return A, B, C, D
-
-
-def del_seq(arr):
-    i = len(arr) - 1
-    while i > 0:
-
-        if arr[i] == arr[i - 1] + 1:
-            arr.pop(i)
-            break
-        i -= 1
-    if len(arr) % 2 == 1:
-        arr.pop(len(arr) - 2)
-    return arr
 
 
 def fill2D(vertexes):
