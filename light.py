@@ -146,12 +146,6 @@ def update_buffer(points, z_buffer):
             z_buffer[int(point.x)][int(point.y)] = point.z
 
 
-def draw_buffer(image, points, z_buffer, color):
-    for point in points:
-        if point.z >= z_buffer[int(point.x)][int(point.y)]:
-            image.putpixel((int(point.x), int(point.y)), color)
-
-
 def diffuse_light(light_point, point, color, A, B, C):
     light_direction = point3(light_point.x - point.x, light_point.y - point.y, light_point.z - point.z)
     light = abs((light_direction.x * A + light_direction.y * B + light_direction.z * C) / (
