@@ -169,11 +169,10 @@ def draw_buffer(image, points, z_buffer, color):
 
 def diffuse_light(light_point, point, color, A, B, C):
     light_direction = point3(light_point.x - point.x, light_point.y - point.y, light_point.z - point.z)
-    light = (light_direction.x * A + light_direction.y * B + light_direction.z * C) / (
+    light = abs((light_direction.x * A + light_direction.y * B + light_direction.z * C) / (
             (light_direction.x ** 2 + light_direction.y ** 2 + light_direction.z ** 2) ** 0.5) / (
-                    (A ** 2 + B ** 2 + C ** 2) ** 0.5)
-    if light < 0:
-        light = 0
+                    (A ** 2 + B ** 2 + C ** 2) ** 0.5))
+
 
     diffuse_light = point3(light * color[0] * 1, light * color[1] * 1, light * color[2] * 1)
     return diffuse_light
@@ -202,11 +201,11 @@ def specular_light(view_point, normal, light_point, point, color):
     return specular_light
 
 
-def draw_light(image, points, color, z_buffer, light_point, norm):
+def draw_light(image, points, z_buffer, light_point, norm):
     for point in points:
         if point.z >= z_buffer[int(point.x)][int(point.y)]:
-            lightd = diffuse_light(light_point, point, color, norm[0], norm[1], norm[2])
-            lights = specular_light(point3(150, 150, -300), norm, light_point, point, color)
+            lightd = diffuse_light(light_point, point, (255, 0, 0), norm[0], norm[1], norm[2])
+            lights = specular_light(point3(149, 149, -300), norm, light_point, point, (255, 0, 0))
             image.putpixel((int(point.x), int(point.y)), (int(lightd.x + lights.x), int(lightd.y + lights.y), int(lightd.z + lights.z)))
             # image.putpixel((int(point.x), int(point.y)), (int(lightd.x), int(lightd.y), int(lightd.z)))
 
@@ -255,11 +254,9 @@ for f in range(len(faces)):
     new_faces.append(fill3D([A, B, C]))
     update_buffer(new_faces[f], z_buffer)
 
-color = [(255, 0, 0), (0, 0, 255), (0, 255, 0), (10, 10, 210),
-         (125, 125, 125), (200, 150, 10), (100, 240, 50), (240, 200, 100),]
 
 for i in range(len(new_faces)):
-    draw_light(img, new_faces[i], color[i], z_buffer, point3(0, 0, 300),
+    draw_light(img, new_faces[i], z_buffer, point3(300, 0, 0),
                get_plane(point3(*faces[i][0]), point3(*faces[i][1]), point3(*faces[i][2])))
 
 img.save('light_with_spec.png')
